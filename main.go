@@ -3,13 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"image"
 	"log"
 
 	"github.com/disintegration/imaging"
+	"github.com/shouro/go-asciify/asciify"
 )
-
-var shade = []string{" ", "░", "▒", "▓", "█"}
 
 var width int
 var height int
@@ -65,26 +63,8 @@ func main() {
 		height = srcImg.Bounds().Max.Y
 	}
 
-	result := toASCII(srcImg, width, height, uint8(bright))
+	result := asciify.ToASCII(srcImg, width, height, uint8(bright))
 	stdoutPrinter(result)
-}
-
-func toASCII(srcImg image.Image, width int, height int, brightness uint8) []string {
-	resizedImg := imaging.Resize(srcImg, width, height, imaging.Lanczos)
-	grayImg := imaging.Grayscale(resizedImg)
-	grayImgBounds := grayImg.Bounds()
-	result := make([]string, 0)
-	for y := grayImgBounds.Min.Y; y < grayImgBounds.Max.Y; y++ {
-		//row := []string{}
-		for x := grayImgBounds.Min.X; x < grayImgBounds.Max.X; x++ {
-			g, _, _, _ := grayImg.At(x, y).RGBA()
-			//fmt.Print(shade[uint8(g)/brightness])
-			result = append(result, shade[uint8(g)/brightness])
-		}
-		//fmt.Print("\n")
-		result = append(result, "\n")
-	}
-	return result
 }
 
 func stdoutPrinter(result []string) {
