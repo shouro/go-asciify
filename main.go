@@ -11,8 +11,10 @@ import (
 
 var width int
 var height int
-var bright int
+var dark int
 var original bool
+var darkMin = 0
+var darkMax = 100
 
 func init() {
 	flag.IntVar(&width, "width", 80, "New width to resize")
@@ -21,8 +23,8 @@ func init() {
 	flag.IntVar(&height, "height", 0, "New height to resize")
 	flag.IntVar(&height, "y", 0, "New height to resize (shorthand)")
 
-	flag.IntVar(&bright, "bright", 62, "Brightness")
-	flag.IntVar(&bright, "b", 62, "Brightness (shorthand)")
+	flag.IntVar(&dark, "dark", 0, "darkness")
+	flag.IntVar(&dark, "d", 0, "darkness (shorthand)")
 
 	flag.BoolVar(&original, "original", false, "Using the image unmodified")
 	flag.BoolVar(&original, "o", false, "Using the image unmodified (shorthand)")
@@ -41,8 +43,8 @@ func main() {
 		return
 	}
 
-	if bright < 52 || bright > 255 {
-		fmt.Println("Brightness must be between 52 and 255")
+	if dark < 0 || dark > 100 {
+		fmt.Println("darkness must be between 0 and 100")
 		return
 	}
 
@@ -63,12 +65,15 @@ func main() {
 		height = srcImg.Bounds().Max.Y
 	}
 
-	result := asciify.ToASCII(srcImg, width, height, uint8(bright))
+	result := asciify.ToASCII(srcImg, width, height, uint8(dark))
 	stdoutPrinter(result)
 }
 
-func stdoutPrinter(result []string) {
-	for _, c := range result {
-		fmt.Print(c)
+func stdoutPrinter(result [][]string) {
+	for _, row := range result {
+		for _, c := range row {
+			fmt.Print(c)
+		}
+		fmt.Print("\n")
 	}
 }
