@@ -64,16 +64,13 @@ func main() {
 		width = srcImg.Bounds().Max.X
 		height = srcImg.Bounds().Max.Y
 	}
-
-	result := asciify.ToASCII(srcImg, width, height, uint8(dark))
+	resizedImg := imaging.Resize(srcImg, width, height, imaging.Lanczos)
+	result := asciify.ToASCII(resizedImg, uint8(dark))
 	stdoutPrinter(result)
 }
 
-func stdoutPrinter(result [][]string) {
+func stdoutPrinter(result []string) {
 	for _, row := range result {
-		for _, c := range row {
-			fmt.Print(c)
-		}
-		fmt.Print("\n")
+		fmt.Print(row + "\n")
 	}
 }

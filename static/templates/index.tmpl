@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>go-asciify</title>
+</head>
+<body>
+<h1>ASCIIfy Image</h1>
+
+<form action="/goascii" method="post" enctype="multipart/form-data">
+    Files: <input type="file" name="imagefile"><br><br>
+    <input type="submit" value="Submit">
+</form>
+<div>{{.flash}}<div>
+<textarea readonly rows="720" cols="1280" style="font-size:1pt;line-height: 1px;" >
+{{.asciiout}}
+</textarea>
+</body>
