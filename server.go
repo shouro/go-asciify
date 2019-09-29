@@ -31,13 +31,13 @@ func makeASCII(imgPath string) string {
 		log.Fatalf("failed to open image: %v", err)
 		return ""
 	}
-	//width := srcImg.Bounds().Max.X
-	//height := srcImg.Bounds().Max.Y
-	//width := 80
+	width := srcImg.Bounds().Max.X
+	height := srcImg.Bounds().Max.Y
+	//width := 960
 	//height := 0
 	var dark uint8
-	//resizedImg := imaging.Resize(srcImg, width, height, imaging.Lanczos)
-	ascii := asciify.ToASCII(srcImg, dark)
+	resizedImg := imaging.Resize(srcImg, width, height, imaging.Lanczos)
+	ascii := asciify.ToASCII(resizedImg, dark)
 	out := ""
 	for _, row := range ascii {
 		out = out + row + "\n"
@@ -50,7 +50,7 @@ func main() {
 	r := gin.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-	r.LoadHTMLGlob("static/templates/*")
+	r.LoadHTMLGlob("static/*")
 	store := memstore.NewStore([]byte("supersecret")) //TODO: set proper secret
 	r.Use(sessions.Sessions("asciifysession", store))
 
@@ -61,7 +61,7 @@ func main() {
 		flash := session.Get("flash")
 		session.Set("flash", nil)
 		session.Save()
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		c.HTML(http.StatusOK, "index.html", gin.H{
 			"asciiout": asciiout,
 			"flash":    flash,
 		})

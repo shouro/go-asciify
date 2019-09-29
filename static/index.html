@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ASCIIfy Image</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>ASCIIfy Image</h1>
+
+    <form action="/goascii" method="post" enctype="multipart/form-data">
+        <label for="input">Select an image file:</label><br>
+        <input type="file" name="imagefile"><br><br>
+        <input type="submit" value="ASCIIfy">
+    </form>
+    <br>
+    <div>{{.flash}}<div>
+    <br>
+    <textarea readonly rows="540" cols="960" style="font-size:1pt;line-height:1px;" >
+    {{.asciiout}}
+    </textarea>
+  </div>
+</body>
+</html>

@@ -3,7 +3,6 @@ package asciify
 import (
 	"image"
 	"math"
-	"sync"
 
 	"github.com/disintegration/imaging"
 )
@@ -24,25 +23,23 @@ func ToASCII(srcImg image.Image, darkness uint8) []string {
 	grayImgBounds := grayImg.Bounds()
 	darkness = darkness + uint8(math.Ceil(float64(uint8Max)/float64(len(shade))))
 	result := []string{}
-	ch := make(chan line, grayImgBounds.Max.Y)
-	var wg sync.WaitGroup
+	ch := make(chan line)
 	for y := grayImgBounds.Min.Y; y < grayImgBounds.Max.Y; y++ {
-		wg.Add(1)
-		go func(y int, wg *sync.WaitGroup) {
-			var row string
+		go func(y int) {
+			row := ""
 			for x := grayImgBounds.Min.X; x < grayImgBounds.Max.X; x++ {
 				g, _, _, _ := grayImg.At(x, y).RGBA()
 				row = row + shade[uint8(g)/darkness]
 			}
 			ch <- line{n: y, data: row}
-			wg.Done()
-		}(y, &wg)
+		}(y)
 	}
-	wg.Wait()
-	close(ch)
 	m := make(map[int]string)
-	for ln := range ch {
-		m[ln.n] = ln.data
+	for y := grayImgBounds.Min.Y; y < grayImgBounds.Max.Y; y++ {
+		select {
+		case ln := <-ch:
+			m[ln.n] = ln.data
+		}
 	}
 	for i := 0; i < len(m); i++ {
 		result = append(result, m[i])
